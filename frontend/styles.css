@@ -1,0 +1,304 @@
+:root {
+  --bg: #f7f3ee;
+  --card: #fffdfb;
+  --ink: #3a3531;
+  --muted: #8c827a;
+  --line: #e7ddd2;
+  --accent: #b98a7a;        /* dusty rose */
+  --accent-soft: #efe2db;
+  --accent-ink: #7d5648;
+  --shadow: 0 10px 40px rgba(118, 98, 84, 0.12);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden { display: none !important; }
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 18px 60px;
+}
+
+/* Loader */
+.loader {
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 64px 16px 34px;
+}
+.hero-kicker {
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+}
+.names {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-size: clamp(44px, 12vw, 78px);
+  line-height: 1.02;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.names .amp {
+  color: var(--accent);
+  font-style: italic;
+  font-size: 0.55em;
+  margin: 4px 0;
+}
+.hero-date {
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 22px 0 0;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 26px;
+  margin: 18px 0;
+}
+.center { text-align: center; }
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+.guest-name {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+  font-size: clamp(28px, 7vw, 40px);
+  margin: 0 0 16px;
+  line-height: 1.15;
+}
+.invite-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0;
+}
+
+.section-title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+  font-size: 26px;
+  margin: 0 0 14px;
+}
+
+/* Details */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-label {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.detail-value {
+  font-size: 16px;
+  text-align: right;
+}
+
+/* Map */
+.map-wrap {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.map-wrap iframe { display: block; border: 0; }
+.map-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--accent-ink);
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+.map-link:hover { text-decoration: underline; }
+
+/* Text helpers */
+.muted { color: var(--muted); }
+.small { font-size: 14px; line-height: 1.6; }
+
+/* Monogram */
+.monogram {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 40px;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.monogram.small { font-size: 30px; margin-bottom: 8px; }
+
+/* RSVP buttons */
+.rsvp-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+.rsvp-btn {
+  appearance: none;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 16px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.rsvp-btn:hover { border-color: var(--accent); }
+.rsvp-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(185, 138, 122, 0.35);
+}
+.rsvp-btn.decline.selected {
+  background: #9a9089;
+  border-color: #9a9089;
+  box-shadow: none;
+}
+
+/* Survey */
+.survey-block {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.survey-block:first-child { border-top: none; padding-top: 0; }
+.survey-block > .block-title {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin: 0 0 14px;
+  font-weight: 500;
+}
+.field-label {
+  display: block;
+  font-size: 15px;
+  margin: 16px 0 9px;
+  font-weight: 400;
+}
+
+.options { display: flex; flex-wrap: wrap; gap: 9px; }
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: 1.5px solid var(--line);
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip:hover { border-color: var(--accent); }
+.chip.checked {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 500;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 48px 0 10px;
+}
+
+/* Autosave indicator */
+.save-indicator {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent-ink);
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 9px 18px;
+  border-radius: 30px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+}
+.save-indicator.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
