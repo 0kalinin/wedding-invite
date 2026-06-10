@@ -2,7 +2,7 @@
 // app_config.admin_token. verify_jwt is disabled (custom auth).
 // GET  /admin                              -> all guests (full details) + personal links
 // POST /admin { upsert: [...], delete: [...] }
-//   upsert item: { code?, name, has_plus_one, plus_one_name }
+//   upsert item: { code?, name, gender, has_plus_one, plus_one_name }
 //     - with code: update existing (or insert with that code if missing)
 //     - without code: insert new guest with a generated code
 //   delete: array of codes to remove
@@ -79,6 +79,7 @@ Deno.serve(async (req) => {
       for (const item of upsert) {
         const fields: Record<string, unknown> = {};
         if ("name" in item) fields.name = item.name;
+        if ("gender" in item) fields.gender = item.gender ?? null;
         if ("has_plus_one" in item) fields.has_plus_one = !!item.has_plus_one;
         if ("plus_one_name" in item) fields.plus_one_name = item.plus_one_name ?? null;
 
@@ -94,6 +95,7 @@ Deno.serve(async (req) => {
             await supabase.from("guests").insert({
               code: item.code,
               name: item.name ?? "Гость",
+              gender: item.gender ?? null,
               has_plus_one: !!item.has_plus_one,
               plus_one_name: item.plus_one_name ?? null,
             });
@@ -102,6 +104,7 @@ Deno.serve(async (req) => {
           await supabase.from("guests").insert({
             code: genCode(),
             name: item.name ?? "Гость",
+            gender: item.gender ?? null,
             has_plus_one: !!item.has_plus_one,
             plus_one_name: item.plus_one_name ?? null,
           });

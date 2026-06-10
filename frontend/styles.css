@@ -119,6 +119,24 @@ main {
   margin: 0;
 }
 
+/* Inline-editable +1 name woven into the greeting heading */
+.inline-edit {
+  display: inline-block;
+  min-width: 1.8ch;
+  color: var(--accent-ink);
+  border-bottom: 2px dotted var(--accent);
+  padding: 0 3px;
+  outline: none;
+  line-height: 1.1;
+}
+.inline-edit:focus { border-bottom-style: solid; }
+.inline-edit:empty::before {
+  content: attr(data-ph);
+  color: var(--muted);
+  opacity: 0.55;
+  font-style: italic;
+}
+
 .section-title {
   font-family: "Cormorant Garamond", serif;
   font-weight: 600;

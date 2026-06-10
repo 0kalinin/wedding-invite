@@ -16,7 +16,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 const GUEST_FIELDS =
-  "name, has_plus_one, plus_one_name, attendance, plus_one_name_filled, survey";
+  "name, gender, has_plus_one, plus_one_name, attendance, plus_one_name_filled, survey";
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {

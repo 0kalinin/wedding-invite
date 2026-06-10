@@ -12,7 +12,6 @@ const ALCOHOL = [
 ];
 const FOOD = [
   { v: "vegetarian", l: "Вегетарианец" },
-  { v: "no_pork", l: "Без свинины" },
   { v: "no_fish", l: "Без рыбы и морепродуктов" },
   { v: "no_gluten", l: "Без глютена" },
 ];
@@ -186,19 +185,9 @@ function renderSurvey() {
     // For a +1 guest the survey covers both people.
     root.appendChild(personBlock(guestFirstName() + " — о вас", ""));
 
+    // The +1 name (when not known in advance) is entered inline in the greeting.
     const plusBlock = el("div", { class: "survey-block" });
-    plusBlock.appendChild(el("p", { class: "block-title", text: plusTitle() }));
-
-    // If the +1 name wasn't known in advance, let the guest fill it in.
-    if (!guest.plus_one_name) {
-      plusBlock.appendChild(el("label", { class: "field-label", text: "Имя вашего спутника(цы)" }));
-      const nameInput = el("input", { type: "text", placeholder: "Имя +1" });
-      nameInput.value = guest.plus_one_name_filled || "";
-      nameInput.addEventListener("input", () =>
-        queueSave({ plus_one_name_filled: nameInput.value })
-      );
-      plusBlock.appendChild(nameInput);
-    }
+    plusBlock.appendChild(el("p", { id: "plus-block-title", class: "block-title", text: plusTitle() }));
     root.appendChild(plusBlock);
 
     // Reuse the same fields for the +1, with prefixed keys.
@@ -217,6 +206,12 @@ function guestFirstName() {
 function plusTitle() {
   const n = guest.plus_one_name || guest.plus_one_name_filled;
   return n ? `${n} — о спутнике(це)` : "О вашем спутнике(це)";
+}
+// "один" / "одна" / neutral fallback, based on the primary guest's gender.
+function soloWord() {
+  if (guest.gender === "f") return "одна";
+  if (guest.gender === "m") return "один";
+  return "один(а)";
 }
 
 // ---------- RSVP ----------
@@ -250,7 +245,7 @@ function renderRsvp() {
     q.textContent = "Сможете прийти?";
     buttons = [
       { v: "both", l: "Придём вдвоём", decline: false },
-      { v: "one", l: "Придёт один(а)", decline: false },
+      { v: "one", l: `Приду ${soloWord()}`, decline: false },
       { v: "none", l: "Не сможем прийти", decline: true },
     ];
   } else {
@@ -283,12 +278,37 @@ function renderRsvp() {
 // ---------- greeting ----------
 function renderGreeting() {
   const g = document.getElementById("guest-greeting");
-  if (guest.has_plus_one) {
-    const plus = guest.plus_one_name;
-    g.textContent = plus ? `${guest.name} и ${plus}` : `${guest.name} +1`;
-  } else {
+  g.innerHTML = "";
+
+  if (!guest.has_plus_one) {
     g.textContent = guest.name;
+    return;
   }
+  if (guest.plus_one_name) {
+    g.textContent = `${guest.name} и ${guest.plus_one_name}`;
+    return;
+  }
+
+  // +1 exists but the name wasn't known in advance — let the guest type it
+  // inline, styled to read as part of the heading (not like a form field).
+  g.appendChild(document.createTextNode(`${guest.name} и `));
+  const span = el("span", {
+    class: "inline-edit",
+    contenteditable: "true",
+    "data-ph": "имя",
+    spellcheck: "false",
+  });
+  span.textContent = guest.plus_one_name_filled || "";
+  span.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") e.preventDefault();
+  });
+  span.addEventListener("input", () => {
+    guest.plus_one_name_filled = span.textContent.trim();
+    const t = document.getElementById("plus-block-title");
+    if (t) t.textContent = plusTitle();
+    queueSave({ plus_one_name_filled: guest.plus_one_name_filled });
+  });
+  g.appendChild(span);
 }
 
 // ---------- boot ----------
