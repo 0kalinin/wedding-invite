@@ -183,8 +183,10 @@ function renderSurvey() {
   const root = document.getElementById("survey-fields");
   root.innerHTML = "";
 
-  // Show the +1's questionnaire only when both people are coming.
-  const showPlus = guest.has_plus_one && guest.attendance === "both";
+  // Show the +1's questionnaire only when both people are coming
+  // (and a +1 name actually exists).
+  const showPlus =
+    guest.has_plus_one && guest.attendance === "both" && plusNameAvailable();
 
   // Primary guest's block (label it only when a second block is shown).
   root.appendChild(personBlock(showPlus ? guest.name : "", ""));
@@ -397,6 +399,12 @@ async function init() {
     }
     guest = await res.json();
     survey = guest.survey || {};
+
+    // Guard against stale state: "both" is only valid when a +1 name exists.
+    if (guest.has_plus_one && !plusNameAvailable() && guest.attendance === "both") {
+      guest.attendance = "one";
+      queueSave({ attendance: "one" }, true);
+    }
 
     renderGreeting();
     renderRsvp();

@@ -25,6 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Cache-bust asset URLs
+        # Append the commit SHA to asset URLs so browsers always fetch the
+        # latest JS/CSS instead of a stale cached copy.
+        run: |
+          v=${GITHUB_SHA::8}
+          sed -i "s/styles\.css/styles.css?v=$v/; s/config\.js/config.js?v=$v/; s/app\.js/app.js?v=$v/" frontend/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
