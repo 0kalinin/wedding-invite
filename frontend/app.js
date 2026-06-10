@@ -302,16 +302,9 @@ function renderRsvp() {
 }
 
 // ---------- greeting ----------
-function setHint(show) {
-  const h = document.getElementById("plus-hint");
-  if (h) h.style.display = show ? "" : "none";
-}
-
 function renderGreeting() {
   const g = document.getElementById("guest-greeting");
   g.innerHTML = "";
-  const oldHint = document.getElementById("plus-hint");
-  if (oldHint) oldHint.remove();
 
   if (!guest.has_plus_one) {
     g.textContent = guest.name;
@@ -328,17 +321,12 @@ function renderGreeting() {
   const span = el("span", {
     class: "inline-edit",
     contenteditable: "true",
-    "data-ph": "имя",
+    "data-ph": "имя (+1)",
     spellcheck: "false",
   });
   span.textContent = guest.plus_one_name_filled || "";
 
-  // "необязательно" hint under the name, shown only while it is empty.
-  const hint = el("p", { id: "plus-hint", class: "plus-hint", text: "необязательно" });
-  g.insertAdjacentElement("afterend", hint);
-
   let prevAvail = plusNameAvailable();
-  setHint(!prevAvail);
 
   span.addEventListener("keydown", (e) => {
     if (e.key === "Enter") e.preventDefault();
@@ -346,12 +334,15 @@ function renderGreeting() {
   span.addEventListener("input", () => {
     const val = span.textContent.trim();
     guest.plus_one_name_filled = val;
-    setHint(!val);
 
     const nowAvail = !!val;
     if (nowAvail !== prevAvail) {
-      // Erasing the name collapses a "both" choice down to coming alone.
-      if (!nowAvail && guest.attendance === "both") {
+      if (nowAvail) {
+        // Entering a +1 name implies both are coming.
+        guest.attendance = "both";
+        queueSave({ attendance: "both" }, true);
+      } else if (guest.attendance === "both") {
+        // Erasing the name collapses "both" down to coming alone.
         guest.attendance = "one";
         queueSave({ attendance: "one" }, true);
       }

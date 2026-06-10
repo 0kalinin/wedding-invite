@@ -136,13 +136,6 @@ main {
   opacity: 0.55;
   font-style: italic;
 }
-.plus-hint {
-  margin: 6px 0 0;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  opacity: 0.7;
-}
 
 .section-title {
   font-family: "Cormorant Garamond", serif;
