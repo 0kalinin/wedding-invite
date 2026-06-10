@@ -314,6 +314,9 @@ async function init() {
     if (!res.ok) {
       // Invalid stored code shouldn't trap the user forever.
       if (res.status === 404) localStorage.removeItem("guest_code");
+      const body = await res.text().catch(() => "");
+      const dbg = document.getElementById("error-debug");
+      if (dbg) dbg.textContent = `HTTP ${res.status} · ${body}`;
       show("state-error");
       return;
     }

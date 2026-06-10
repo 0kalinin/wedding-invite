@@ -11,10 +11,9 @@ const cors = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-);
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 const GUEST_FIELDS =
   "name, has_plus_one, plus_one_name, attendance, plus_one_name_filled, survey";
@@ -40,7 +39,15 @@ Deno.serve(async (req) => {
         .eq("code", code)
         .maybeSingle();
 
-      if (error) return json({ error: error.message }, 500);
+      if (error) {
+        console.error("guest GET error", error);
+        return json({
+          error: "db_error",
+          detail: error.message,
+          hasUrl: !!SUPABASE_URL,
+          hasKey: !!SERVICE_ROLE_KEY,
+        }, 500);
+      }
       if (!data) return json({ error: "not_found" }, 404);
       return json(data);
     }
@@ -82,6 +89,7 @@ Deno.serve(async (req) => {
 
     return json({ error: "method_not_allowed" }, 405);
   } catch (err) {
-    return json({ error: String(err) }, 500);
+    console.error("guest unhandled error", err);
+    return json({ error: "exception", detail: String(err) }, 500);
   }
 });
