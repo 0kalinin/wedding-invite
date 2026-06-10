@@ -1,5 +1,7 @@
 "use strict";
 
+console.log("%cГоспода айтишники, пожалуйста не ломайте мой сайтик 🙏", "font-size:14px;color:#b98a7a;font-weight:bold");
+
 const CFG = window.APP_CONFIG;
 
 // ---------- options ----------
@@ -181,11 +183,13 @@ function renderSurvey() {
   const root = document.getElementById("survey-fields");
   root.innerHTML = "";
 
-  if (guest.has_plus_one) {
-    // For a +1 guest the survey covers both people.
-    root.appendChild(personBlock(guestFirstName() + " — о вас", ""));
+  // Show the +1's questionnaire only when both people are coming.
+  const showPlus = guest.has_plus_one && guest.attendance === "both";
 
-    // The +1 name (when not known in advance) is entered inline in the greeting.
+  // Primary guest's block (label it only when a second block is shown).
+  root.appendChild(personBlock(showPlus ? guest.name : "", ""));
+
+  if (showPlus) {
     const plusBlock = el("div", { class: "survey-block" });
     plusBlock.appendChild(el("p", { id: "plus-block-title", class: "block-title", text: plusTitle() }));
     root.appendChild(plusBlock);
@@ -194,18 +198,29 @@ function renderSurvey() {
     const inner = personBlock("", "plus_one_");
     inner.classList.remove("survey-block");
     plusBlock.appendChild(inner);
-  } else {
-    root.appendChild(personBlock("", ""));
   }
 }
 
-// ---------- names ----------
-function guestFirstName() {
-  return guest.name;
+// ---------- names / wording ----------
+// The +1 name, whether set by admin (plus_one_name) or typed by the guest.
+function plusNameValue() {
+  return (guest.plus_one_name || guest.plus_one_name_filled || "").trim();
+}
+function plusNameAvailable() {
+  return !!plusNameValue();
+}
+// Admin did NOT pre-set the +1 name -> the guest may type it inline.
+function plusNameEditable() {
+  return guest.has_plus_one && !guest.plus_one_name;
+}
+// Gendered noun for the +1, used when the name isn't known yet.
+function plusNounCap() {
+  if (guest.plus_one_gender === "f") return "Спутница";
+  if (guest.plus_one_gender === "m") return "Спутник";
+  return "Спутник(ца)";
 }
 function plusTitle() {
-  const n = guest.plus_one_name || guest.plus_one_name_filled;
-  return n ? `${n} — о спутнике(це)` : "О вашем спутнике(це)";
+  return plusNameValue() || plusNounCap();
 }
 // "один" / "одна" / neutral fallback, based on the primary guest's gender.
 function soloWord() {
@@ -235,28 +250,36 @@ function applyAttendanceView() {
   }
 }
 
-function renderRsvp() {
-  const q = document.getElementById("rsvp-question");
-  const box = document.getElementById("rsvp-buttons");
-  box.innerHTML = "";
-
-  let buttons;
-  if (guest.has_plus_one) {
-    q.textContent = "Сможете прийти?";
-    buttons = [
-      { v: "both", l: "Придём вдвоём", decline: false },
-      { v: "one", l: `Приду ${soloWord()}`, decline: false },
-      { v: "none", l: "Не сможем прийти", decline: true },
-    ];
-  } else {
-    q.textContent = "Сможете прийти?";
-    buttons = [
-      { v: "yes", l: "С радостью приду", decline: false },
+// Which buttons to show, depending on +1 presence and whether the +1 has a name.
+function rsvpButtons() {
+  if (!guest.has_plus_one) {
+    return [
+      { v: "yes", l: "С радостью приду" },
       { v: "no", l: "К сожалению, не смогу", decline: true },
     ];
   }
+  // Has a +1 slot, but no name yet -> behave like a single guest.
+  // "Приду" means coming alone (one); "Не приду" -> none.
+  if (!plusNameAvailable()) {
+    return [
+      { v: "one", l: "Приду" },
+      { v: "none", l: "Не приду", decline: true },
+    ];
+  }
+  // +1 name known -> full set of three options.
+  return [
+    { v: "both", l: "Придём вдвоём" },
+    { v: "one", l: `Приду ${soloWord()}` },
+    { v: "none", l: "Не сможем прийти", decline: true },
+  ];
+}
 
-  for (const b of buttons) {
+function renderRsvp() {
+  document.getElementById("rsvp-question").textContent = "Сможете прийти?";
+  const box = document.getElementById("rsvp-buttons");
+  box.innerHTML = "";
+
+  for (const b of rsvpButtons()) {
     const btn = el("button", {
       class:
         "rsvp-btn" +
@@ -268,6 +291,7 @@ function renderRsvp() {
       guest.attendance = b.v;
       [...box.children].forEach((c) => c.classList.remove("selected"));
       btn.classList.add("selected");
+      renderSurvey(); // +1 block visibility depends on both/one
       applyAttendanceView();
       queueSave({ attendance: b.v }, true);
     });
@@ -276,9 +300,16 @@ function renderRsvp() {
 }
 
 // ---------- greeting ----------
+function setHint(show) {
+  const h = document.getElementById("plus-hint");
+  if (h) h.style.display = show ? "" : "none";
+}
+
 function renderGreeting() {
   const g = document.getElementById("guest-greeting");
   g.innerHTML = "";
+  const oldHint = document.getElementById("plus-hint");
+  if (oldHint) oldHint.remove();
 
   if (!guest.has_plus_one) {
     g.textContent = guest.name;
@@ -299,14 +330,38 @@ function renderGreeting() {
     spellcheck: "false",
   });
   span.textContent = guest.plus_one_name_filled || "";
+
+  // "необязательно" hint under the name, shown only while it is empty.
+  const hint = el("p", { id: "plus-hint", class: "plus-hint", text: "необязательно" });
+  g.insertAdjacentElement("afterend", hint);
+
+  let prevAvail = plusNameAvailable();
+  setHint(!prevAvail);
+
   span.addEventListener("keydown", (e) => {
     if (e.key === "Enter") e.preventDefault();
   });
   span.addEventListener("input", () => {
-    guest.plus_one_name_filled = span.textContent.trim();
+    const val = span.textContent.trim();
+    guest.plus_one_name_filled = val;
+    setHint(!val);
+
+    const nowAvail = !!val;
+    if (nowAvail !== prevAvail) {
+      // Erasing the name collapses a "both" choice down to coming alone.
+      if (!nowAvail && guest.attendance === "both") {
+        guest.attendance = "one";
+        queueSave({ attendance: "one" }, true);
+      }
+      prevAvail = nowAvail;
+      renderRsvp(); // switch between 2- and 3-button modes
+      renderSurvey(); // show/hide the +1 fields
+      applyAttendanceView();
+    }
+
     const t = document.getElementById("plus-block-title");
     if (t) t.textContent = plusTitle();
-    queueSave({ plus_one_name_filled: guest.plus_one_name_filled });
+    queueSave({ plus_one_name_filled: val });
   });
   g.appendChild(span);
 }

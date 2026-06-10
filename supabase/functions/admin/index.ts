@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
         if ("gender" in item) fields.gender = item.gender ?? null;
         if ("has_plus_one" in item) fields.has_plus_one = !!item.has_plus_one;
         if ("plus_one_name" in item) fields.plus_one_name = item.plus_one_name ?? null;
+        if ("plus_one_gender" in item) fields.plus_one_gender = item.plus_one_gender ?? null;
 
         if (item.code) {
           const { data: existing } = await supabase
@@ -98,6 +99,7 @@ Deno.serve(async (req) => {
               gender: item.gender ?? null,
               has_plus_one: !!item.has_plus_one,
               plus_one_name: item.plus_one_name ?? null,
+              plus_one_gender: item.plus_one_gender ?? null,
             });
           }
         } else {
