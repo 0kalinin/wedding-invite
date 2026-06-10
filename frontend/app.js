@@ -21,6 +21,7 @@ const TRANSPORT = [
   { v: "there", l: "Туда" },
   { v: "back", l: "Обратно" },
   { v: "both", l: "Туда-обратно" },
+  { v: "own", l: "Свой транспорт" },
   { v: "none", l: "Не нужно" },
 ];
 
@@ -173,7 +174,7 @@ function personBlock(title, prefix) {
   if (title) block.appendChild(el("p", { class: "block-title", text: title }));
   block.appendChild(checkboxGroup("Что предпочитаете из напитков?", ALCOHOL, prefix + "alcohol"));
   block.appendChild(checkboxGroup("Особенности в еде", FOOD, prefix + "food"));
-  block.appendChild(textField("Аллергии / что не едите", prefix + "food_notes", "Напишите, если есть"));
+  block.appendChild(textField("Аллергии / что не едите / пожелания к алкоголю", prefix + "food_notes", "Напишите, если есть"));
   block.appendChild(singleSelect("Нужна помощь с трансфером?", TRANSPORT, prefix + "transport"));
   block.appendChild(textField("Пожелания / комментарий", prefix + "notes", "Что-то ещё?"));
   return block;
@@ -238,17 +239,27 @@ function attendanceIsGoing(a) {
 
 function applyAttendanceView() {
   const surveyEl = document.getElementById("survey");
-  const declinedEl = document.getElementById("declined");
+  const noteEl = document.getElementById("status-note");
+  const noteText = document.getElementById("status-note-text");
   const a = guest.attendance;
+
   if (a == null) {
     surveyEl.classList.add("hidden");
-    declinedEl.classList.add("hidden");
+    noteEl.classList.add("hidden");
   } else if (attendanceIsGoing(a)) {
-    declinedEl.classList.add("hidden");
+    // Coming -> show the questionnaire.
+    noteEl.classList.add("hidden");
     surveyEl.classList.remove("hidden");
-  } else {
+  } else if (a === "maybe") {
+    // Undecided -> no questionnaire, gentle note.
     surveyEl.classList.add("hidden");
-    declinedEl.classList.remove("hidden");
+    noteText.textContent = "Будем ждать вашего решения 🙂 Дайте знать, как определитесь.";
+    noteEl.classList.remove("hidden");
+  } else {
+    // Declined.
+    surveyEl.classList.add("hidden");
+    noteText.textContent = "Жаль, что не сможете быть с нами. Спасибо, что дали знать — будем скучать! 💛";
+    noteEl.classList.remove("hidden");
   }
 }
 
@@ -256,23 +267,26 @@ function applyAttendanceView() {
 function rsvpButtons() {
   if (!guest.has_plus_one) {
     return [
-      { v: "yes", l: "С радостью приду" },
-      { v: "no", l: "К сожалению, не смогу", decline: true },
+      { v: "yes", l: "Обязательно буду!" },
+      { v: "maybe", l: "Пока не знаю", maybe: true },
+      { v: "no", l: "Не смогу 😢", decline: true },
     ];
   }
-  // Has a +1 slot, but no name yet -> behave like a single guest.
-  // "Приду" means coming alone (one); "Не приду" -> none.
+  // Has a +1 slot, but no name yet -> the guest speaks only for themselves.
+  // "Обязательно буду!" means coming alone (one).
   if (!plusNameAvailable()) {
     return [
-      { v: "one", l: "Приду" },
-      { v: "none", l: "Не приду", decline: true },
+      { v: "one", l: "Обязательно буду!" },
+      { v: "maybe", l: "Пока не знаю", maybe: true },
+      { v: "none", l: "Не смогу 😢", decline: true },
     ];
   }
-  // +1 name known -> full set of three options.
+  // +1 name known -> full set.
   return [
-    { v: "both", l: "Придём вдвоём" },
+    { v: "both", l: "Обязательно будем!" },
     { v: "one", l: `Приду ${soloWord()}` },
-    { v: "none", l: "Не сможем прийти", decline: true },
+    { v: "maybe", l: "Пока не знаем", maybe: true },
+    { v: "none", l: "Не сможем 😢", decline: true },
   ];
 }
 
@@ -286,6 +300,7 @@ function renderRsvp() {
       class:
         "rsvp-btn" +
         (b.decline ? " decline" : "") +
+        (b.maybe ? " maybe" : "") +
         (guest.attendance === b.v ? " selected" : ""),
       text: b.l,
     });

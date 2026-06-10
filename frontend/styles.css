@@ -166,6 +166,52 @@ main {
   text-align: right;
 }
 
+/* Timeline (vertical steps) */
+.timeline {
+  list-style: none;
+  margin: 8px 0 2px;
+  padding: 0;
+}
+.timeline li {
+  position: relative;
+  padding: 0 0 24px 30px;
+}
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.timeline li::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 17px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.timeline li:last-child::after { display: none; }
+.t-time {
+  display: block;
+  font-weight: 600;
+  color: var(--accent-ink);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+.t-label {
+  display: block;
+  color: var(--ink);
+  font-size: 15px;
+  margin-top: 1px;
+}
+
 /* Map */
 .map-wrap {
   position: relative;
@@ -229,6 +275,12 @@ main {
 .rsvp-btn.decline.selected {
   background: #9a9089;
   border-color: #9a9089;
+  box-shadow: none;
+}
+.rsvp-btn.maybe.selected {
+  background: #cdab73;
+  border-color: #cdab73;
+  color: #fff;
   box-shadow: none;
 }
 
