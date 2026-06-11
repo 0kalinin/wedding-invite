@@ -73,14 +73,14 @@ main {
   object-fit: cover;
   object-position: 50% 26%;
   opacity: 0;
-  /* 5 slides x 2s = 10s loop, auto-advancing crossfade (no manual control). */
-  animation: heroFade 10s infinite;
+  /* 5 slides x 4s = 20s loop, auto-advancing crossfade (no manual control). */
+  animation: heroFade 20s infinite;
 }
 .hero-slide:nth-child(1) { animation-delay: 0s; }
-.hero-slide:nth-child(2) { animation-delay: 2s; }
-.hero-slide:nth-child(3) { animation-delay: 4s; }
-.hero-slide:nth-child(4) { animation-delay: 6s; }
-.hero-slide:nth-child(5) { animation-delay: 8s; }
+.hero-slide:nth-child(2) { animation-delay: 4s; }
+.hero-slide:nth-child(3) { animation-delay: 8s; }
+.hero-slide:nth-child(4) { animation-delay: 12s; }
+.hero-slide:nth-child(5) { animation-delay: 16s; }
 @keyframes heroFade {
   0%   { opacity: 0; }
   3%   { opacity: 1; }
@@ -97,15 +97,21 @@ main {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 64px 20px 28px;
+  padding: 96px 20px 30px;
   text-align: center;
   color: #fff;
+  /* Frosted glass: darken + slight blur behind the title, fading upward so
+     the upper part of the photo stays crisp. */
   background: linear-gradient(
     to top,
-    rgba(38, 32, 28, 0.78),
-    rgba(38, 32, 28, 0.42) 45%,
-    rgba(38, 32, 28, 0) 100%
+    rgba(24, 20, 18, 0.80),
+    rgba(24, 20, 18, 0.40) 55%,
+    rgba(24, 20, 18, 0) 100%
   );
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 55%, transparent 100%);
 }
 .hero-overlay .hero-kicker { color: #f3e6df; opacity: 0.95; }
 .hero-overlay .names { color: #fff; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45); }
