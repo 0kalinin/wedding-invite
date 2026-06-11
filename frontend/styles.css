@@ -50,11 +50,64 @@ main {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Hero */
-.hero {
+/* Hero banner (photo with overlaid title) */
+.hero-banner {
+  position: relative;
+  /* Break out of the page's horizontal padding to go edge-to-edge. */
+  margin: 0 -18px 16px;
+  aspect-ratio: 2 / 3;
+  max-height: 90vh;
+  overflow: hidden;
+  background: var(--accent-soft);
+  border-radius: 0 0 20px 20px;
+}
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 26%;
+  display: block;
+}
+.hero-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 64px 20px 28px;
   text-align: center;
+  color: #fff;
+  background: linear-gradient(
+    to top,
+    rgba(38, 32, 28, 0.78),
+    rgba(38, 32, 28, 0.42) 45%,
+    rgba(38, 32, 28, 0) 100%
+  );
+}
+.hero-overlay .hero-kicker { color: #f3e6df; opacity: 0.95; }
+.hero-overlay .names { color: #fff; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45); }
+.hero-overlay .names .amp { color: #e7c3b4; }
+.hero-overlay .hero-date { color: #efe2db; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4); }
+
+/* Fallback when the photo is missing: plain text hero on soft background. */
+.hero-banner.no-img {
+  aspect-ratio: auto;
+  max-height: none;
+  overflow: visible;
+  background: none;
+  border-radius: 0;
+  margin: 0 0 8px;
+}
+.hero-banner.no-img .hero-overlay {
+  position: static;
+  background: none;
   padding: 64px 16px 34px;
 }
+.hero-banner.no-img .hero-overlay .hero-kicker { color: var(--accent); }
+.hero-banner.no-img .hero-overlay .names { color: var(--ink); text-shadow: none; }
+.hero-banner.no-img .hero-overlay .names .amp { color: var(--accent); }
+.hero-banner.no-img .hero-overlay .hero-date { color: var(--muted); text-shadow: none; }
+
+/* Title typography (shared by banner overlay and fallback) */
 .hero-kicker {
   font-size: 13px;
   letter-spacing: 0.32em;
