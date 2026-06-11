@@ -108,8 +108,8 @@ main {
     rgba(24, 20, 18, 0.40) 55%,
     rgba(24, 20, 18, 0) 100%
   );
-  -webkit-backdrop-filter: blur(6px) saturate(1.05);
-  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.05);
+  backdrop-filter: blur(2.5px) saturate(1.05);
   -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
   mask-image: linear-gradient(to top, #000 55%, transparent 100%);
 }
@@ -295,6 +295,15 @@ main {
   letter-spacing: 0.04em;
 }
 .map-link:hover { text-decoration: underline; }
+
+/* Venue photo */
+.venue-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
 
 /* Text helpers */
 .muted { color: var(--muted); }
