@@ -423,3 +423,29 @@ async function init() {
 }
 
 init();
+
+// ---------- hero slideshow ----------
+// 4s per slide, crossfade, no manual controls. Slides 2 and 5 (index 1 and 4)
+// drop the frosted blur behind the title.
+(function heroSlider() {
+  const slides = Array.from(document.querySelectorAll(".hero-slide"));
+  const banner = document.getElementById("hero-banner");
+  if (!slides.length) return;
+  if (slides.length < 2) {
+    slides[0].classList.add("active");
+    return;
+  }
+  const NO_BLUR = new Set([1, 4]);
+  let i = 0;
+  const apply = () => {
+    slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+    if (banner) banner.classList.toggle("no-blur", NO_BLUR.has(i));
+  };
+  apply();
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    setInterval(() => {
+      i = (i + 1) % slides.length;
+      apply();
+    }, 4000);
+  }
+})();
