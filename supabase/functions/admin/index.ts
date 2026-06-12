@@ -1,7 +1,8 @@
 // Admin API. Protected by the `x-admin-token` header, checked against
 // app_config.admin_token. verify_jwt is disabled (custom auth).
 // GET  /admin                              -> all guests (full details) + personal links
-// POST /admin { upsert: [...], delete: [...] }
+// POST /admin { upsert: [...], delete: [...], reset: [codes] }
+//   reset: clear attendance, survey and the guest-typed +1 name for those codes
 //   upsert item: { code?, name, full_name, gender, has_plus_one, plus_one_name, plus_one_gender }
 //     - with code: update existing (or insert with that code if missing)
 //     - without code: insert new guest with a generated code
@@ -71,9 +72,17 @@ Deno.serve(async (req) => {
       const body = await req.json().catch(() => null);
       const upsert = Array.isArray(body?.upsert) ? body.upsert : [];
       const del = Array.isArray(body?.delete) ? body.delete : [];
+      const reset = Array.isArray(body?.reset) ? body.reset : [];
 
       for (const code of del) {
         await supabase.from("guests").delete().eq("code", code);
+      }
+
+      // Clear a guest's own answers, keeping the invitation itself intact.
+      for (const code of reset) {
+        await supabase.from("guests")
+          .update({ attendance: null, plus_one_name_filled: null, survey: {} })
+          .eq("code", code);
       }
 
       for (const item of upsert) {

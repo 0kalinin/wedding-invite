@@ -291,7 +291,8 @@ function rsvpButtons() {
 }
 
 function renderRsvp() {
-  document.getElementById("rsvp-question").textContent = "Сможете прийти?";
+  document.getElementById("rsvp-question").innerHTML =
+    'Сможете прийти? <span class="rsvp-hint">Выбор можно изменить позже.</span>';
   const box = document.getElementById("rsvp-buttons");
   box.innerHTML = "";
 
