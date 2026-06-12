@@ -324,6 +324,8 @@ function renderGreeting() {
 
   // Singular "тебя" for a solo invite, plural "вас" when a +1 is included.
   const you = guest.has_plus_one ? "вас" : "тебя";
+  const eyebrow = document.getElementById("greeting-eyebrow");
+  if (eyebrow) eyebrow.textContent = guest.has_plus_one ? "Дорогие гости" : "Дорогой гость";
   const intro = document.getElementById("invite-text");
   if (intro) {
     intro.textContent =
