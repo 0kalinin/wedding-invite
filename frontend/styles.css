@@ -61,22 +61,14 @@ main {
   background: var(--accent-soft);
   border-radius: 0 0 20px 20px;
 }
-.hero-slides {
-  position: absolute;
-  inset: 0;
-}
-.hero-slide {
+.hero-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: 50% 26%;
-  opacity: 0;
-  /* Crossfade; advancing is driven by JS (4s per slide, no manual control). */
-  transition: opacity 1.1s ease;
 }
-.hero-slide.active { opacity: 1; }
 .hero-overlay {
   position: absolute;
   left: 0;
@@ -97,11 +89,6 @@ main {
   backdrop-filter: blur(2.5px) saturate(1.05);
   -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
   mask-image: linear-gradient(to top, #000 55%, transparent 100%);
-}
-/* Some slides read better without the blur behind the title. */
-.hero-banner.no-blur .hero-overlay {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
 .hero-overlay .hero-kicker { color: #f3e6df; opacity: 0.95; }
 .hero-overlay .names { color: #fff; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45); }
@@ -277,6 +264,17 @@ main {
   border: 1px solid var(--line);
 }
 .map-wrap iframe { display: block; border: 0; }
+/* Transparent shield: prevents panning the map (drag does nothing, page still
+   scrolls over it). The right strip is left uncovered for the zoom +/- buttons. */
+.map-shield {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 64px;
+  z-index: 2;
+  background: transparent;
+}
 .map-link {
   display: inline-block;
   margin-top: 14px;

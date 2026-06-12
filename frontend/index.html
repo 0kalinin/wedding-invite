@@ -34,13 +34,7 @@
   <!-- Main invitation -->
   <main id="state-main" class="hidden">
     <header class="hero-banner" id="hero-banner">
-      <div class="hero-slides">
-        <img class="hero-slide" src="photos/1.jpg" alt="Алексей и Вероника" decoding="async" />
-        <img class="hero-slide" src="photos/2.jpg" alt="" decoding="async" />
-        <img class="hero-slide" src="photos/3.jpeg" alt="" decoding="async" />
-        <img class="hero-slide" src="photos/4.jpg" alt="" decoding="async" />
-        <img class="hero-slide" src="photos/5.jpg" alt="" decoding="async" />
-      </div>
+      <img class="hero-img" src="photos/1.jpg" alt="Алексей и Вероника" decoding="async" />
       <div class="hero-overlay">
         <p class="hero-kicker">Мы женимся</p>
         <h1 class="names">Алексей<span class="amp">&amp;</span>Вероника</h1>
@@ -80,6 +74,8 @@
           allowfullscreen="true"
           loading="lazy"
         ></iframe>
+        <!-- Blocks dragging/panning; the right strip stays free for the zoom +/- buttons. -->
+        <div class="map-shield" aria-hidden="true"></div>
       </div>
       <a
         class="map-link"
