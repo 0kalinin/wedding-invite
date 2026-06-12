@@ -308,6 +308,11 @@ main {
 }
 .monogram.small { font-size: 30px; margin-bottom: 8px; }
 
+.rsvp-hint {
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
 /* RSVP buttons */
 .rsvp-buttons {
   display: flex;
