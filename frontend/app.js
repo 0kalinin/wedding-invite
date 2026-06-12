@@ -269,7 +269,7 @@ function rsvpButtons() {
     return [
       { v: "yes", l: "Обязательно буду!" },
       { v: "maybe", l: "Пока не знаю", maybe: true },
-      { v: "no", l: "Не смогу :(", decline: true },
+      { v: "no", l: "Не смогу ☹️", decline: true },
     ];
   }
   // Has a +1 slot, but no name yet -> the guest speaks only for themselves.
@@ -278,7 +278,7 @@ function rsvpButtons() {
     return [
       { v: "one", l: "Обязательно буду!" },
       { v: "maybe", l: "Пока не знаю", maybe: true },
-      { v: "none", l: "Не смогу :(", decline: true },
+      { v: "none", l: "Не смогу ☹️", decline: true },
     ];
   }
   // +1 name known -> full set.
@@ -286,7 +286,7 @@ function rsvpButtons() {
     { v: "both", l: "Обязательно будем!" },
     { v: "one", l: `Приду ${soloWord()}` },
     { v: "maybe", l: "Пока не знаем", maybe: true },
-    { v: "none", l: "Не сможем :(", decline: true },
+    { v: "none", l: "Не сможем ☹️", decline: true },
   ];
 }
 
