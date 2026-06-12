@@ -412,6 +412,36 @@ textarea:focus, input[type="text"]:focus {
   border-color: var(--accent);
 }
 
+/* Explicit save button at the bottom of the questionnaire */
+.survey-save {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.save-btn {
+  appearance: none;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px 40px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 6px 18px rgba(185, 138, 122, 0.35);
+}
+.save-btn:hover { filter: brightness(0.96); }
+.save-btn:disabled { opacity: 0.6; cursor: default; box-shadow: none; }
+.save-msg {
+  margin: 12px 0 0;
+  min-height: 18px;
+}
+.save-msg.ok { color: var(--accent-ink); }
+.save-msg.err { color: #9a3b3b; }
+
 /* Footer */
 .footer {
   text-align: center;

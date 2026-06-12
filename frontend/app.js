@@ -202,6 +202,52 @@ function renderSurvey() {
     inner.classList.remove("survey-block");
     plusBlock.appendChild(inner);
   }
+
+  // Explicit "Save" button at the very bottom. Answers already autosave on every
+  // change; this is a reassurance for guests who expect to press something.
+  const saveWrap = el("div", { class: "survey-save" });
+  const btn = el("button", { class: "save-btn", text: "Сохранить" });
+  const msg = el("p", { class: "save-msg small" });
+  btn.addEventListener("click", () => manualSave(btn, msg));
+  saveWrap.appendChild(btn);
+  saveWrap.appendChild(msg);
+  root.appendChild(saveWrap);
+}
+
+// Forces a save of the current state (independent of the per-change autosave)
+// and shows a clear confirmation near the button.
+async function manualSave(btn, msg) {
+  clearTimeout(saveTimer);
+  const patch = {
+    ...pendingPatch,
+    attendance: guest.attendance,
+    plus_one_name_filled: guest.plus_one_name_filled ?? null,
+    survey: { ...(survey || {}), ...(pendingPatch.survey || {}) },
+  };
+  pendingPatch = {};
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Сохранение…";
+  msg.textContent = "";
+  msg.classList.remove("ok", "err");
+  try {
+    const res = await api("/guest", {
+      method: "POST",
+      body: JSON.stringify({ code: CODE, patch }),
+    });
+    if (!res.ok) throw new Error("save failed");
+    const data = await res.json();
+    guest = data;
+    survey = data.survey || {};
+    msg.textContent = "Спасибо! Ваши ответы сохранены ✓";
+    msg.classList.add("ok");
+  } catch (e) {
+    msg.textContent = "Не удалось сохранить. Проверьте интернет и попробуйте ещё раз.";
+    msg.classList.add("err");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
 }
 
 // ---------- names / wording ----------
